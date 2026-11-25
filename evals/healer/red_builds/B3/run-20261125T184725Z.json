@@ -1,0 +1,62 @@
+{
+  "prompt_version": "base.v1",
+  "set_hash": "edd63a445285",
+  "profile": "clean+D20",
+  "judge_model": "not-used",
+  "rubric_version": "rubric.v1",
+  "elapsed": 6.5,
+  "set": "l03",
+  "gate": "daily",
+  "case_filter": [
+    "FX-002"
+  ],
+  "stand_prompt_label": "base.v1",
+  "ran_at": "2026-11-25T18:47:31+00:00",
+  "gate_mode": "full",
+  "l11_required": true,
+  "passed": 0,
+  "failed": 1,
+  "errors": 0,
+  "skipped": 0,
+  "total": 1,
+  "machine": {
+    "agent_calls": 1,
+    "tokens_in": 8592,
+    "tokens_out": 905,
+    "tokens_total": 9497,
+    "cost_usd": 0.0006
+  },
+  "unit_tests": {
+    "l11_dir": "/course/l11",
+    "manual": {
+      "exit_code": 0,
+      "passed": 7,
+      "failed": 0,
+      "summary": "7 passed in 0.02s"
+    },
+    "generated": {
+      "exit_code": 0,
+      "passed": 40,
+      "failed": 0,
+      "summary": "40 passed in 0.09s"
+    }
+  },
+  "exit_code": 1,
+  "cases": [
+    {
+      "id": "FX-002",
+      "set": "l03",
+      "layer": "generation",
+      "gate": "daily",
+      "status": "fail",
+      "assertion": "numeric",
+      "passed": false,
+      "skipped": false,
+      "level": 2,
+      "detail": "expected 3231.52 +/-0.02; numbers in answer: [3000.0, 3211.96, 3000.0, 1.086957, 3260.87, 2.0, 1.5, 48.91]",
+      "checks": [],
+      "trace_file": "reports/traces/20261125T184725Z/FX-002.json",
+      "answer": "Your final amount for converting 3,000 EUR to USD is **3,211.96 USD**.\n\n| Component | Value |\n|---|---|\n| Amount sent | 3,000.00 EUR |\n| Mid rate (EUR→USD) | 1.086957 |\n| Gross USD at mid rate | 3,260.87 USD |\n| Tier 2 spread (1.5%) | −48.91 USD |\n| **Final amount received** | **3,211.96 USD** |\n\nTh"
+    }
+  ]
+}

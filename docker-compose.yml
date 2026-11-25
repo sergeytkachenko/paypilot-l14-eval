@@ -1,0 +1,34 @@
+services:
+  eval:
+    build: .
+    working_dir: /course/solutions/evals
+    entrypoint: ["python", "run_eval.py"]
+    command: []
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      PYTHONPATH: /course
+      SET: ${SET:-all}
+      GATE: ${GATE:-daily}
+      GATE_MODE: ${GATE_MODE:-full}
+      CASE: ${CASE:-}
+      PROFILE: ${PROFILE:-clean}
+      DEFECTS: ${DEFECTS:-}
+      JUDGE_BACKEND: ${JUDGE_BACKEND:-}
+      JUDGE_MODEL: ${JUDGE_MODEL:-}
+      TRIAGE_MODEL: ${TRIAGE_MODEL:-}
+      OLLAMA_URL: ${OLLAMA_URL:-http://host.docker.internal:11434}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      L11_DIR: /course/l11
+      SERVICE_URL: ${EVAL_STAND_URL:-http://host.docker.internal:8000}
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - .:/course/solutions/evals
+      - ${STAND_DIR:-../paypilot-stand}/app:/course/app:ro
+      - ${L11_DIR:-../l11}:/course/l11:ro
+    extra_hosts:
+      - host.docker.internal:host-gateway

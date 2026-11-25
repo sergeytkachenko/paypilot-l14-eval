@@ -1,0 +1,20 @@
+# Підставити мутанта промпту в стенд без зміни стенду (опційне завдання «мутанти промпту»).
+#
+# Запуск із теки стенду (~/paypilot/paypilot-stand); MUT — шлях до файлу мутанта
+# відносно теки стенду. bash / Git Bash / macOS:
+#   MUT=../l12/prompts/mutants/base.v1-mut01.md docker compose -f docker-compose.yml -f ../l12/prompts/compose.mut.yml up -d
+# Windows PowerShell:
+#   $env:MUT = "../l12/prompts/mutants/base.v1-mut01.md"
+#   docker compose -f docker-compose.yml -f ../l12/prompts/compose.mut.yml up -d
+# Перевірити, що діє: перший рядок промпту
+#   curl.exe -s http://localhost:8000/api/_test/prompt
+# Повернутися на base.v1:
+#   docker compose up -d
+#
+# Стенд завжди читає /stand/prompts/base.v1.md; цей файл монтує мутанта поверх нього.
+# Мітка стенду лишається «base.v1». Контур бере версію з першого рядка промпту,
+# тому в кожному мутанті перший рядок має бути свій: «# PayPilot — system prompt (base.v1-mut01)».
+services:
+  stand:
+    volumes:
+      - ${MUT:?задайте MUT — шлях до файлу мутанта відносно теки стенду}:/stand/prompts/base.v1.md:ro

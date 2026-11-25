@@ -1,0 +1,13 @@
+{
+  "case_id": "DIS-006",
+  "status": "error",
+  "verdict": {
+    "passed": false,
+    "level": 1,
+    "assertion": "stand_error",
+    "detail": "POST /chat -> 500: Internal Server Error"
+  },
+  "tool_calls": [],
+  "answers": [],
+  "trace": {}
+}

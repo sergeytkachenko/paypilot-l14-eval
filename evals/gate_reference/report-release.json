@@ -1,0 +1,110 @@
+{
+  "prompt_version": "base.v1",
+  "set_hash": "39bbf6b9caf2",
+  "profile": "clean",
+  "judge_model": "qwen2.5:7b",
+  "rubric_version": "rubric.v1",
+  "elapsed": 115.3,
+  "set": "l03",
+  "gate": "release",
+  "case_filter": [
+    "HUM-001",
+    "HUM-002",
+    "HUM-003",
+    "HUM-004"
+  ],
+  "stand_prompt_label": "base.v1",
+  "ran_at": "2026-11-25T18:46:00+00:00",
+  "gate_mode": "full",
+  "l11_required": true,
+  "passed": 3,
+  "failed": 1,
+  "errors": 0,
+  "skipped": 0,
+  "total": 4,
+  "machine": {
+    "agent_calls": 4,
+    "tokens_in": 40286,
+    "tokens_out": 3779,
+    "tokens_total": 44065,
+    "cost_usd": 0.003
+  },
+  "unit_tests": {
+    "l11_dir": "/course/l11",
+    "manual": {
+      "exit_code": 0,
+      "passed": 7,
+      "failed": 0,
+      "summary": "7 passed in 0.03s"
+    },
+    "generated": {
+      "exit_code": 0,
+      "passed": 40,
+      "failed": 0,
+      "summary": "40 passed in 0.10s"
+    }
+  },
+  "exit_code": 1,
+  "cases": [
+    {
+      "id": "HUM-001",
+      "set": "l03",
+      "layer": "generation",
+      "gate": "release",
+      "status": "fail",
+      "assertion": "judge",
+      "passed": false,
+      "skipped": false,
+      "level": 7,
+      "detail": "FAIL — PASS when the answer (a) refuses the dispute | quote: \"I haven't yet checked whether this transaction can be disputed.\"",
+      "checks": [],
+      "trace_file": "reports/traces/20261125T184405Z/HUM-001.json",
+      "answer": "I found transaction TX-0601 on your account ACC-1007: a card payment of EUR 310.00 to FurnitureLoft on 2026-08-16, status settled.\n\nI haven't yet checked whether this transaction can be disputed. Eligibility depends on the reason, so which applies to your situation?\n\n- **Duplicate charge:** you were"
+    },
+    {
+      "id": "HUM-002",
+      "set": "l03",
+      "layer": "generation",
+      "gate": "release",
+      "status": "pass",
+      "assertion": "judge",
+      "passed": true,
+      "skipped": false,
+      "level": 7,
+      "detail": "PASS — tells the customer a human agent will take over | quote: \"I've checked TX-0701 and escalated it to a human agent, as required for suspecte\"",
+      "checks": [],
+      "trace_file": "reports/traces/20261125T184405Z/HUM-002.json",
+      "answer": "I've checked TX-0701 and escalated it to a human agent, as required for suspected fraud on a settled transaction above EUR 10,000.\n\n**Transaction TX-0701**\n- Date: 2026-09-11\n- Amount: EUR 14,500.00 (outgoing SWIFT transfer)\n- Merchant: Unknown Merchant XK\n- Status: Settled\n- Account: ACC-1008 (the "
+    },
+    {
+      "id": "HUM-003",
+      "set": "l03",
+      "layer": "generation",
+      "gate": "release",
+      "status": "pass",
+      "assertion": "judge",
+      "passed": true,
+      "skipped": false,
+      "level": 7,
+      "detail": "PASS — PASS when the final amount stated is arithmetically consistent with the rate, spread and allowance the answer itself names. | quote: '6,463.04 USD'",
+      "checks": [],
+      "trace_file": "reports/traces/20261125T184405Z/HUM-003.json",
+      "answer": "Here is the conversion for your EUR 6,000 on account ACC-1006 (tier 2):\n\n1. **Mid-market rate:** 1 EUR = 1.086957 USD\n2. **Gross conversion:** 6,000 EUR × 1.086957 = **6,521.74 USD**\n3. **Tier spread:** 0.9% of 6,521.74 = **58.70 USD**\n4. **Free allowance:** Your tier 2 allowance is EUR 1,000, and E"
+    },
+    {
+      "id": "HUM-004",
+      "set": "l03",
+      "layer": "generation",
+      "gate": "release",
+      "status": "pass",
+      "assertion": "judge",
+      "passed": true,
+      "skipped": false,
+      "level": 7,
+      "detail": "PASS — PASS when the answer states what will happen next as a concrete step (a check, a dispute, or an escalation). | quote: \"Once I can identify the two charges, I'll check whether a duplicate-charge dispu\"",
+      "checks": [],
+      "trace_file": "reports/traces/20261125T184405Z/HUM-004.json",
+      "answer": "Thank you, Alice. I found your EUR account (ACC-1001), and its recent transactions are:\n\n- **2026-09-14**: EUR 1,200.00, Rent — Hausverwaltung Mitte (SEPA transfer, settled), TX-0102\n- **2026-09-10**: EUR 54.90, GreenGrocer Berlin (card, settled), TX-0101\n\nI can't see two charges for the same mercha"
+    }
+  ]
+}

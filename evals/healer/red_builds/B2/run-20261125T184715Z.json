@@ -1,0 +1,97 @@
+{
+  "prompt_version": "base.v1",
+  "set_hash": "0dedbe96604a",
+  "profile": "clean+D26",
+  "judge_model": "not-used",
+  "rubric_version": "rubric.v1",
+  "elapsed": 8.3,
+  "set": "l03,l12",
+  "gate": "daily",
+  "case_filter": [
+    "DIS-007",
+    "JNT-026"
+  ],
+  "stand_prompt_label": "base.v1",
+  "ran_at": "2026-11-25T18:47:23+00:00",
+  "gate_mode": "full",
+  "l11_required": true,
+  "passed": 0,
+  "failed": 2,
+  "errors": 0,
+  "skipped": 0,
+  "total": 2,
+  "machine": {
+    "agent_calls": 2,
+    "tokens_in": 14262,
+    "tokens_out": 987,
+    "tokens_total": 15249,
+    "cost_usd": 0.0008
+  },
+  "unit_tests": {
+    "l11_dir": "/course/l11",
+    "manual": {
+      "exit_code": 0,
+      "passed": 7,
+      "failed": 0,
+      "summary": "7 passed in 0.02s"
+    },
+    "generated": {
+      "exit_code": 0,
+      "passed": 40,
+      "failed": 0,
+      "summary": "40 passed in 0.09s"
+    }
+  },
+  "exit_code": 1,
+  "cases": [
+    {
+      "id": "DIS-007",
+      "set": "l03",
+      "layer": "action",
+      "gate": "daily",
+      "status": "fail",
+      "assertion": "tool_result_flag",
+      "passed": false,
+      "skipped": false,
+      "level": 1,
+      "detail": "check_dispute_eligibility.eligible = True, expected False",
+      "checks": [],
+      "trace_file": "reports/traces/20261125T184715Z/DIS-007.json",
+      "answer": "Transaction TX-0601 is eligible for a dispute under the **goods not received** reason code.\n\n- **Transaction date:** 16 Aug 2026\n- **Dispute window:** 90 days, with a deadline of **14 Nov 2026**\n- **Checks passed:** reason code, transaction status, dispute window, and account restrictions\n\nI have no"
+    },
+    {
+      "id": "JNT-026",
+      "set": "l12",
+      "layer": "action",
+      "gate": "daily",
+      "status": "fail",
+      "assertion": "joint",
+      "passed": false,
+      "skipped": false,
+      "level": 4,
+      "detail": "cross_dispute_under_hold: Узгодженість рушія, інструмента та стану disputes",
+      "checks": [
+        {
+          "label": "disputes_window_ok",
+          "level": 1,
+          "passed": true,
+          "detail": "Перевірка вікна спору інструментом"
+        },
+        {
+          "label": "compliance_hold_flag",
+          "level": 1,
+          "passed": true,
+          "detail": "Compliance hold у стані клієнта"
+        },
+        {
+          "label": "cross_dispute_under_hold",
+          "level": 4,
+          "passed": false,
+          "detail": "Узгодженість рушія, інструмента та стану disputes"
+        }
+      ],
+      "trace_file": "reports/traces/20261125T184715Z/JNT-026.json",
+      "answer": "The dispute for TX-0601 is open (dispute ID 1). The reason is \"goods not received.\"\n\n- **Eligibility:** The transaction passed the reason-code, status, time-window and account-hold checks. The transaction date is 16 Aug 2026, and the dispute deadline is 14 Nov 2026.\n- **Account:** The dispute was fi"
+    }
+  ]
+}

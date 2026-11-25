@@ -1,0 +1,62 @@
+{
+  "prompt_version": "base.v1",
+  "set_hash": "89c7a321a900",
+  "profile": "clean",
+  "judge_model": "not-used",
+  "rubric_version": "rubric.v1",
+  "elapsed": 2.2,
+  "set": "l04",
+  "gate": "daily",
+  "case_filter": [
+    "RET-107"
+  ],
+  "stand_prompt_label": "base.v1",
+  "ran_at": "2026-11-25T18:49:40+00:00",
+  "gate_mode": "full",
+  "l11_required": true,
+  "passed": 0,
+  "failed": 1,
+  "errors": 0,
+  "skipped": 0,
+  "total": 1,
+  "machine": {
+    "agent_calls": 1,
+    "tokens_in": 5893,
+    "tokens_out": 138,
+    "tokens_total": 6031,
+    "cost_usd": 0.0002
+  },
+  "unit_tests": {
+    "l11_dir": "/course/l11",
+    "manual": {
+      "exit_code": 0,
+      "passed": 7,
+      "failed": 0,
+      "summary": "7 passed in 0.02s"
+    },
+    "generated": {
+      "exit_code": 0,
+      "passed": 40,
+      "failed": 0,
+      "summary": "40 passed in 0.06s"
+    }
+  },
+  "exit_code": 1,
+  "cases": [
+    {
+      "id": "RET-107",
+      "set": "l04",
+      "layer": "retrieval",
+      "gate": "daily",
+      "status": "fail",
+      "assertion": "contains",
+      "passed": false,
+      "skipped": false,
+      "level": 3,
+      "detail": "'30' not in the answer",
+      "checks": [],
+      "trace_file": "reports/traces/20261125T184938Z/RET-107.json",
+      "answer": "The chargeback window for the **fraud_card_not_present** reason code is **120 days**, counted from the transaction date. According to the Verta dispute rules, a dispute opened after that window closes is not eligible."
+    }
+  ]
+}

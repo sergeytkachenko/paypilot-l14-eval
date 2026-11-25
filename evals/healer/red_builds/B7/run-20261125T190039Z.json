@@ -1,0 +1,62 @@
+{
+  "prompt_version": "base.v1",
+  "set_hash": "863a17657cf3",
+  "profile": "clean",
+  "judge_model": "not-used",
+  "rubric_version": "rubric.v1",
+  "elapsed": 27.7,
+  "set": "l03",
+  "gate": "release",
+  "case_filter": [
+    "ORD-001"
+  ],
+  "stand_prompt_label": "base.v1",
+  "ran_at": "2026-11-25T19:01:06+00:00",
+  "gate_mode": "full",
+  "l11_required": true,
+  "passed": 0,
+  "failed": 1,
+  "errors": 0,
+  "skipped": 0,
+  "total": 1,
+  "machine": {
+    "agent_calls": 5,
+    "tokens_in": 37120,
+    "tokens_out": 4368,
+    "tokens_total": 41488,
+    "cost_usd": 0.003
+  },
+  "unit_tests": {
+    "l11_dir": "/course/l11",
+    "manual": {
+      "exit_code": 0,
+      "passed": 7,
+      "failed": 0,
+      "summary": "7 passed in 0.02s"
+    },
+    "generated": {
+      "exit_code": 0,
+      "passed": 40,
+      "failed": 0,
+      "summary": "40 passed in 0.06s"
+    }
+  },
+  "exit_code": 1,
+  "cases": [
+    {
+      "id": "ORD-001",
+      "set": "l03",
+      "layer": "action",
+      "gate": "release",
+      "status": "fail",
+      "assertion": "exact_tool_calls",
+      "passed": false,
+      "skipped": false,
+      "level": 1,
+      "detail": "expected ['check_limits'], called ['get_account', 'check_limits']",
+      "checks": [],
+      "trace_file": "reports/traces/20261125T190039Z/ORD-001.json",
+      "answer": "Yes, based on your limits, a 4,500 EUR transfer today is within your allowance.\n\n- **Tier:** tier3\n- **Daily limit:** EUR 100,000. Spent today: EUR 4,914. Remaining: EUR 95,086.\n- **Monthly limit:** EUR 1,000,000. Remaining: EUR 964,666.\n\nYour account ACC-1011 holds a balance of GBP 61,200. It is de"
+    }
+  ]
+}

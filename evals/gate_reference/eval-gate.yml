@@ -1,0 +1,99 @@
+name: eval-gate
+
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      layer:
+        description: Quality gate layer to run
+        required: true
+        default: daily
+        type: choice
+        options:
+          - daily
+          - release
+  push:
+    branches:
+      - release
+
+concurrency:
+  group: eval-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CLOCK_OVERRIDE: "2026-09-15T10:00:00Z"
+  SET: l03
+
+jobs:
+  daily:
+    if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.layer == 'daily')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GATE: daily
+      PROFILE: clean
+      DEFECTS: ""
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bootstrap PayPilot stand
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: bash scripts/ci_bootstrap_stand.sh
+
+      - name: Smoke check (--dry-run)
+        run: docker compose run --rm eval --dry-run
+
+      - name: Run eval gate (daily)
+        run: docker compose run --rm -e SET -e GATE -e PROFILE -e DEFECTS eval
+
+      - name: Upload eval report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-report
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 30
+
+  release:
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.layer == 'release')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GATE: release
+      PROFILE: clean
+      JUDGE_BACKEND: ollama
+      JUDGE_MODEL: qwen2.5:7b
+      OLLAMA_URL: http://host.docker.internal:11434
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bootstrap PayPilot stand
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: bash scripts/ci_bootstrap_stand.sh
+
+      - name: Run eval gate (release)
+        run: docker compose run --rm -e SET -e GATE -e PROFILE -e JUDGE_BACKEND -e JUDGE_MODEL -e OLLAMA_URL eval
+
+      - name: Upload release report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-report-release
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 90
+
+  deploy:
+    needs: release
+    if: success()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy PayPilot release
+        run: echo "Deploying verified release after eval-gate / release passed."

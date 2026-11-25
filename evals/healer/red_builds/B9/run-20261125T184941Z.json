@@ -1,0 +1,62 @@
+{
+  "prompt_version": "base.v1",
+  "set_hash": "e06ef1ba6557",
+  "profile": "clean",
+  "judge_model": "not-used",
+  "rubric_version": "rubric.v1",
+  "elapsed": 2.3,
+  "set": "l04",
+  "gate": "daily",
+  "case_filter": [
+    "RET-101"
+  ],
+  "stand_prompt_label": "base.v1",
+  "ran_at": "2026-11-25T18:49:44+00:00",
+  "gate_mode": "full",
+  "l11_required": true,
+  "passed": 0,
+  "failed": 1,
+  "errors": 0,
+  "skipped": 0,
+  "total": 1,
+  "machine": {
+    "agent_calls": 1,
+    "tokens_in": 5882,
+    "tokens_out": 156,
+    "tokens_total": 6038,
+    "cost_usd": 0.0002
+  },
+  "unit_tests": {
+    "l11_dir": "/course/l11",
+    "manual": {
+      "exit_code": 0,
+      "passed": 7,
+      "failed": 0,
+      "summary": "7 passed in 0.02s"
+    },
+    "generated": {
+      "exit_code": 0,
+      "passed": 40,
+      "failed": 0,
+      "summary": "40 passed in 0.06s"
+    }
+  },
+  "exit_code": 1,
+  "cases": [
+    {
+      "id": "RET-101",
+      "set": "l04",
+      "layer": "retrieval",
+      "gate": "daily",
+      "status": "fail",
+      "assertion": "contains",
+      "passed": false,
+      "skipped": false,
+      "level": 3,
+      "detail": "'2.0%' not in the answer",
+      "checks": [],
+      "trace_file": "reports/traces/20261125T184941Z/RET-101.json",
+      "answer": "According to the Verta tariff schedule, the FX spread for a Tier 1 account is **1.5%** over the mid-market rate.\n\nThe spread applies only after the customer's free monthly conversion allowance is used up, and the Tier 1 allowance is **EUR 500** per month."
+    }
+  ]
+}
