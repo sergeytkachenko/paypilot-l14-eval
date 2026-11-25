@@ -92,8 +92,9 @@ def _ask(system: str, prompt: str) -> tuple[str, str]:
         headers = {"Content-Type": "application/json", "Authorization": f"Bearer {or_key}"}
         payload = json.dumps({
             "model": model,
-            "max_tokens": 500,
+            "max_tokens": 800,
             "temperature": 0,
+            "reasoning": {"enabled": False},
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
         }).encode("utf-8")
         mode = "openai"
@@ -102,7 +103,7 @@ def _ask(system: str, prompt: str) -> tuple[str, str]:
         headers = {"Content-Type": "application/json", "x-api-key": ant_key, "anthropic-version": "2023-06-01"}
         payload = json.dumps({
             "model": model,
-            "max_tokens": 500,
+            "max_tokens": 800,
             "temperature": 0,
             "system": system,
             "messages": [{"role": "user", "content": prompt}],
@@ -113,7 +114,7 @@ def _ask(system: str, prompt: str) -> tuple[str, str]:
         headers = {"Content-Type": "application/json", "Authorization": f"Bearer {oai_key}"}
         payload = json.dumps({
             "model": model,
-            "max_tokens": 500,
+            "max_tokens": 800,
             "temperature": 0,
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
         }).encode("utf-8")
@@ -130,8 +131,14 @@ def _ask(system: str, prompt: str) -> tuple[str, str]:
                 if mode == "anthropic":
                     text = "".join(b.get("text", "") for b in data.get("content", []))
                 else:
-                    text = data["choices"][0]["message"]["content"] or ""
-                return text, model
+                    text = data["choices"][0]["message"].get("content") or ""
+                if text.strip():
+                    return text, model
+                if attempt < 3:
+                    time.sleep(delay)
+                    delay *= 2
+                    continue
+                raise RuntimeError(f"triage returned empty response: {str(data)[:200]}")
         except urllib.error.HTTPError as e:
             detail = e.read().decode("utf-8")[:200]
             if e.code in (429, 500, 502, 503, 529) and attempt < 3:
