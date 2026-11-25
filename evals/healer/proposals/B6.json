@@ -1,0 +1,18 @@
+{
+  "build_id": "B6",
+  "case_id": "DIS-006",
+  "label": "environment",
+  "correct_action": "rerun",
+  "hypothesis": "environment",
+  "action": "rerun",
+  "proposal": {
+    "target": "stand .env (missing API key for chat service)",
+    "change": "Populate the missing API key variable in the stand's .env file so the /chat endpoint can authenticate its model backend, then rerun DIS-006.",
+    "diff_preview": "--- a/stand/.env\n+++ b/stand/.env\n@@\n-# LLM_API_KEY=\n+LLM_API_KEY=${LLM_API_KEY}  # injected from CI secret store",
+    "needs_human": true,
+    "risk": "Secret handling: the key must come from the CI secret store, not be committed; a wrong or expired key would keep the 500 in place, and the same key may also affect other daily-gate cases.",
+    "touches_surface": "system",
+    "blocked_by_boundary": false
+  },
+  "model": "anthropic/claude-haiku-5.5"
+}

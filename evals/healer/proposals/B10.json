@@ -1,0 +1,18 @@
+{
+  "build_id": "B10",
+  "case_id": "HUM-002",
+  "label": "environment",
+  "correct_action": "rerun",
+  "hypothesis": "environment",
+  "action": "rerun",
+  "proposal": {
+    "target": "ollama judge endpoint (http://127.0.0.1:11439)",
+    "change": "Restart or start the local Ollama server on port 11439 (or correct the judge URL to the running instance) so the qwen2.5:7b judge is reachable before re-running HUM-002.",
+    "diff_preview": "- judge_url: http://127.0.0.1:11439\n+ judge_url: http://127.0.0.1:<running_ollama_port>\n# or: ollama serve (listening on 11439) before CI step",
+    "needs_human": false,
+    "risk": "If the port change points at a different model server, judge scores may shift and become non-comparable with prior builds; the agent answer itself was not the failure cause.",
+    "touches_surface": "system",
+    "blocked_by_boundary": false
+  },
+  "model": "anthropic/claude-haiku-5.5"
+}

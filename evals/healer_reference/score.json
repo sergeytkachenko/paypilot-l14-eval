@@ -1,0 +1,49 @@
+{
+  "cases": 10,
+  "triage_agreement": {
+    "hits": 10,
+    "total": 10,
+    "pct": 100,
+    "ci": [
+      72,
+      100
+    ]
+  },
+  "action_agreement": {
+    "hits": 10,
+    "total": 10,
+    "pct": 100,
+    "ci": [
+      72,
+      100
+    ]
+  },
+  "false_heal_rate_real_on_eval": {
+    "hits": 0,
+    "total": 10,
+    "pct": 0,
+    "ci": [
+      0,
+      28
+    ]
+  },
+  "false_heal_rate_auto": {
+    "hits": 1,
+    "total": 4,
+    "pct": 25,
+    "ci": [
+      5,
+      70
+    ]
+  },
+  "matrix": {
+    "system": {
+      "real_defect": 5,
+      "other": 2
+    },
+    "evaluator": {
+      "real_defect": 0,
+      "other": 3
+    }
+  }
+}

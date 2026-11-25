@@ -1,0 +1,18 @@
+{
+  "build_id": "B2",
+  "case_id": "JNT-026",
+  "label": "real_defect",
+  "correct_action": "fix_system",
+  "hypothesis": "real_defect",
+  "action": "fix_system",
+  "proposal": {
+    "target": "disputes eligibility check (check_dispute_eligibility compliance_hold handling)",
+    "change": "Make check_dispute_eligibility read the customer's compliance_hold flag (CUS-0006 hold=1) and return eligible=False with the compliance_hold check set to fail, instead of reporting pass.",
+    "diff_preview": "--- a/disputes/eligibility.py\n+++ b/disputes/eligibility.py\n@@ def check_dispute_eligibility(transaction_id, reason_code):\n-    checks[\"compliance_hold\"] = \"pass\"\n+    hold = customers.get_compliance_hold(tx.customer_id)\n+    checks[\"compliance_hold\"] = \"fail\" if hold else \"pass\"\n-    eligible = all(v == \"pass\" for k, v in checks.items() if k != \"compliance_hold\")\n+    eligible = all(v == \"pass\" for v in checks.values())",
+    "needs_human": false,
+    "risk": "Blocking disputes for all customers with compliance_hold may change outcomes for other eligible cases and existing open disputes; the hold lookup must match the engine's disputes.check behavior exactly.",
+    "touches_surface": "system",
+    "blocked_by_boundary": false
+  },
+  "model": "anthropic/claude-haiku-5.5"
+}

@@ -1,0 +1,182 @@
+[
+  {
+    "build_id": "B1",
+    "case_id": "DIS-006",
+    "label": "real_defect",
+    "correct_action": "fix_system",
+    "hypothesis": "real_defect",
+    "action": "fix_system",
+    "proposal": {
+      "target": "disputes.check (eligibility logic, D19 profile path)",
+      "change": "Make check() return eligible=False when the D19 profile path applies a 90-day window to duplicate_charge in settled status, matching the engine's direct call result.",
+      "diff_preview": "--- a/disputes/check.py\n+++ b/disputes/check.py\n@@ check(...)\n-    eligible = all(checks.values())\n+    eligible = all(checks.values()) and not d19_window_override_blocks(tx_status, reason_code, as_of)",
+      "needs_human": false,
+      "risk": "Tool result and engine output disagree only under clean+D19; changing eligibility gating could alter other dispute cases that currently pass under D19 and may hide a real policy decision about window length.",
+      "touches_surface": "system",
+      "blocked_by_boundary": false
+    },
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  {
+    "build_id": "B2",
+    "case_id": "JNT-026",
+    "label": "real_defect",
+    "correct_action": "fix_system",
+    "hypothesis": "real_defect",
+    "action": "fix_system",
+    "proposal": {
+      "target": "disputes eligibility check (check_dispute_eligibility compliance_hold handling)",
+      "change": "Make check_dispute_eligibility read the customer's compliance_hold flag (CUS-0006 hold=1) and return eligible=False with the compliance_hold check set to fail, instead of reporting pass.",
+      "diff_preview": "--- a/disputes/eligibility.py\n+++ b/disputes/eligibility.py\n@@ def check_dispute_eligibility(transaction_id, reason_code):\n-    checks[\"compliance_hold\"] = \"pass\"\n+    hold = customers.get_compliance_hold(tx.customer_id)\n+    checks[\"compliance_hold\"] = \"fail\" if hold else \"pass\"\n-    eligible = all(v == \"pass\" for k, v in checks.items() if k != \"compliance_hold\")\n+    eligible = all(v == \"pass\" for v in checks.values())",
+      "needs_human": false,
+      "risk": "Blocking disputes for all customers with compliance_hold may change outcomes for other eligible cases and existing open disputes; the hold lookup must match the engine's disputes.check behavior exactly.",
+      "touches_surface": "system",
+      "blocked_by_boundary": false
+    },
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  {
+    "build_id": "B3",
+    "case_id": "FX-002",
+    "label": "real_defect",
+    "correct_action": "fix_system",
+    "hypothesis": "real_defect",
+    "action": "fix_system",
+    "proposal": {
+      "target": "quote_fx (FX quoting tool, spread selection for tier2 customers)",
+      "change": "Apply the tier2 0.9% spread instead of the default 1.5% when the customer's tier is tier2 and the 800 EUR allowance usage is accounted for, so FX-002 returns 3231.52 as the engine expects.",
+      "diff_preview": "--- a/quote_fx.py\n+++ b/quote_fx.py\n@@ def quote_fx(...):\n-    spread_pct = DEFAULT_SPREAD_PCT\n+    spread_pct = TIER_SPREAD_PCT[tier]  # tier2 -> 0.9\n     ...\n-    final_amount = gross_amount - spread_amount\n+    final_amount = gross_amount * (1 - spread_pct / 100)",
+      "needs_human": true,
+      "risk": "Changing spread selection globally could alter quotes for all tier2 customers and other FX cases; the trace shows allowance_applied=false, so the expected 3231.52 may also depend on allowance logic, and the test expectation's basis needs confirmation before changing code.",
+      "touches_surface": "system",
+      "blocked_by_boundary": false
+    },
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  {
+    "build_id": "B4",
+    "case_id": "LIM-003",
+    "label": "real_defect",
+    "correct_action": "fix_system",
+    "hypothesis": "real_defect",
+    "action": "fix_system",
+    "proposal": {
+      "target": "check_limits (limits tool: monthly_remaining_eur computation)",
+      "change": "Compute monthly_remaining_eur as monthly_limit_eur minus monthly_spent_eur instead of reusing the daily_remaining_eur value (D22 defect).",
+      "diff_preview": "- \"monthly_remaining_eur\": daily_remaining_eur\n+ \"monthly_remaining_eur\": monthly_limit_eur - monthly_spent_eur",
+      "needs_human": false,
+      "risk": "Other consumers that relied on monthly_remaining_eur equaling the daily remaining value, and tiers where monthly_spent_eur is not maintained consistently, could see changed figures.",
+      "touches_surface": "system",
+      "blocked_by_boundary": false
+    },
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  {
+    "build_id": "B5",
+    "case_id": "RET-107",
+    "label": "stale_case",
+    "correct_action": "fix_case",
+    "hypothesis": "stale_case",
+    "action": "fix_case",
+    "proposal": {
+      "target": "sets/l04 RET-107 expectation",
+      "change": "The case expects '30' for the fraud_card_not_present window, but the corpus states 120 days for that reason code; the expected value in the set is wrong (or the case should target duplicate_charge's 60-day window), so the stale expectation must be corrected by a human.",
+      "diff_preview": "--- a/sets/l04/RET-107\n+++ b/sets/l04/RET-107\n- expect contains \"30\"\n+ expect contains \"120\"",
+      "needs_human": true,
+      "risk": "Editing the expected value in sets/** is a protected change; an incorrect correction would mask a real regression or wrongly pass the case, so a human must confirm the intended reason code and value.",
+      "touches_surface": "evaluator",
+      "blocked_by_boundary": true
+    },
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  {
+    "build_id": "B6",
+    "case_id": "DIS-006",
+    "label": "environment",
+    "correct_action": "rerun",
+    "hypothesis": "environment",
+    "action": "rerun",
+    "proposal": {
+      "target": "stand .env (missing API key for chat service)",
+      "change": "Populate the missing API key variable in the stand's .env file so the /chat endpoint can authenticate its model backend, then rerun DIS-006.",
+      "diff_preview": "--- a/stand/.env\n+++ b/stand/.env\n@@\n-# LLM_API_KEY=\n+LLM_API_KEY=${LLM_API_KEY}  # injected from CI secret store",
+      "needs_human": true,
+      "risk": "Secret handling: the key must come from the CI secret store, not be committed; a wrong or expired key would keep the 500 in place, and the same key may also affect other daily-gate cases.",
+      "touches_surface": "system",
+      "blocked_by_boundary": false
+    },
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  {
+    "build_id": "B7",
+    "case_id": "ORD-001",
+    "label": "flaky",
+    "correct_action": "move_layer",
+    "hypothesis": "flaky",
+    "action": "move_layer",
+    "proposal": {
+      "target": "evals/sets/l03 ORD-001 (assertion exact_tool_calls)",
+      "change": "Quarantine or relax the exact_tool_calls check for ORD-001 so tool call order is not asserted, since the model's extra get_account call is non-deterministic on the clean profile.",
+      "diff_preview": "--- a/evals/sets/l03\n+++ b/evals/sets/l03\n@@ ORD-001\n- assertion: exact_tool_calls\n- expected_tool_calls: [check_limits]\n+ assertion: tool_calls_subset\n+ expected_tool_calls: [check_limits]",
+      "needs_human": true,
+      "risk": "Editing evals/sets/** is a protected path, and the case expectation itself is what would change; a human must decide whether to relax the assertion or accept the extra get_account call, and weakening exact_tool_calls could mask real regressions in tool selection.",
+      "touches_surface": "evaluator",
+      "blocked_by_boundary": true
+    },
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  {
+    "build_id": "B8",
+    "case_id": "FX-002",
+    "label": "real_defect",
+    "correct_action": "fix_system",
+    "hypothesis": "real_defect",
+    "action": "fix_system",
+    "proposal": {
+      "target": "quote_fx (FX tool, free-allowance handling for tier2)",
+      "change": "Apply the remaining 200 EUR free allowance so the spread is charged only on the portion of the amount exceeding it, instead of on the full 3000 EUR.",
+      "diff_preview": "--- a/fx/quote.py\n+++ b/fx/quote.py\n@@ quote_fx()\n- taxable = amount\n+ remaining_allowance = max(0.0, allowance_total_eur - allowance_used_before_eur)\n+ taxable = max(0.0, amount - remaining_allowance)\n  spread_amount = taxable * mid_rate * spread_pct / 100\n  allowance_applied = remaining_allowance > 0",
+      "needs_human": true,
+      "risk": "Expected value 3231.52 implies spread on 2800 EUR (27.39 on... ) but the engine's own expectation is ambiguous: the trace says allowance was ignored (D21), yet 'allowance_applied': false and the reported answer's allowance wording conflicts with the 800 EUR used figure; confirm the intended allowance semantics before changing the calculation, since altering fee math affects all tier2 quotes and any case expectation may itself be wrong (eval case FX-002 lives under sets/, which is protected).",
+      "touches_surface": "system",
+      "blocked_by_boundary": false
+    },
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  {
+    "build_id": "B9",
+    "case_id": "RET-101",
+    "label": "stale_case",
+    "correct_action": "fix_case",
+    "hypothesis": "stale_case",
+    "action": "fix_case",
+    "proposal": {
+      "target": "evals/sets/l04 (case RET-101 expectation)",
+      "change": "Stale eval expectation: the corpus (tariffs.md#s2) says Tier 1 FX spread is 1.5%, and the agent answered correctly, so the case's expected '2.0%' assertion should be corrected to match the source of truth.",
+      "diff_preview": "--- a/evals/sets/l04.yaml\n+++ b/evals/sets/l04.yaml\n@@ RET-101\n- contains: \"2.0%\"\n+ contains: \"1.5%\"",
+      "needs_human": true,
+      "risk": "Editing evals/sets/** is a protected path, so a human must apply this; if 2.0% was intentional (e.g., a different tier or a pending tariff change), updating the case would mask a real regression.",
+      "touches_surface": "evaluator",
+      "blocked_by_boundary": true
+    },
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  {
+    "build_id": "B10",
+    "case_id": "HUM-002",
+    "label": "environment",
+    "correct_action": "rerun",
+    "hypothesis": "environment",
+    "action": "rerun",
+    "proposal": {
+      "target": "ollama judge endpoint (http://127.0.0.1:11439)",
+      "change": "Restart or start the local Ollama server on port 11439 (or correct the judge URL to the running instance) so the qwen2.5:7b judge is reachable before re-running HUM-002.",
+      "diff_preview": "- judge_url: http://127.0.0.1:11439\n+ judge_url: http://127.0.0.1:<running_ollama_port>\n# or: ollama serve (listening on 11439) before CI step",
+      "needs_human": false,
+      "risk": "If the port change points at a different model server, judge scores may shift and become non-comparable with prior builds; the agent answer itself was not the failure cause.",
+      "touches_surface": "system",
+      "blocked_by_boundary": false
+    },
+    "model": "anthropic/claude-haiku-5.5"
+  }
+]

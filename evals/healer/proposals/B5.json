@@ -1,0 +1,18 @@
+{
+  "build_id": "B5",
+  "case_id": "RET-107",
+  "label": "stale_case",
+  "correct_action": "fix_case",
+  "hypothesis": "stale_case",
+  "action": "fix_case",
+  "proposal": {
+    "target": "sets/l04 RET-107 expectation",
+    "change": "The case expects '30' for the fraud_card_not_present window, but the corpus states 120 days for that reason code; the expected value in the set is wrong (or the case should target duplicate_charge's 60-day window), so the stale expectation must be corrected by a human.",
+    "diff_preview": "--- a/sets/l04/RET-107\n+++ b/sets/l04/RET-107\n- expect contains \"30\"\n+ expect contains \"120\"",
+    "needs_human": true,
+    "risk": "Editing the expected value in sets/** is a protected change; an incorrect correction would mask a real regression or wrongly pass the case, so a human must confirm the intended reason code and value.",
+    "touches_surface": "evaluator",
+    "blocked_by_boundary": true
+  },
+  "model": "anthropic/claude-haiku-5.5"
+}

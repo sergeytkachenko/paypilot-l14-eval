@@ -1,0 +1,18 @@
+{
+  "build_id": "B4",
+  "case_id": "LIM-003",
+  "label": "real_defect",
+  "correct_action": "fix_system",
+  "hypothesis": "real_defect",
+  "action": "fix_system",
+  "proposal": {
+    "target": "check_limits (limits tool: monthly_remaining_eur computation)",
+    "change": "Compute monthly_remaining_eur as monthly_limit_eur minus monthly_spent_eur instead of reusing the daily_remaining_eur value (D22 defect).",
+    "diff_preview": "- \"monthly_remaining_eur\": daily_remaining_eur\n+ \"monthly_remaining_eur\": monthly_limit_eur - monthly_spent_eur",
+    "needs_human": false,
+    "risk": "Other consumers that relied on monthly_remaining_eur equaling the daily remaining value, and tiers where monthly_spent_eur is not maintained consistently, could see changed figures.",
+    "touches_surface": "system",
+    "blocked_by_boundary": false
+  },
+  "model": "anthropic/claude-haiku-5.5"
+}
